@@ -1,0 +1,2 @@
+https://github.com/opencivicdata/python-legistar-scraper/archive/refs/heads/event_fixes.zip
+pupa
