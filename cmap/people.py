@@ -56,11 +56,15 @@ class CMAPPersonScraper(LegistarAPIPersonScraper, Scraper):
         members = {}
         for member, offices in terms.items():
             p = Person(member)
+            ever_voting_member = False
             for term in offices:
                 extra_text = term["OfficeRecordExtraText"]
-                post_description = extra_text.split("(")[0].strip(', ')
-                if post_description == 'non-voting member':
+                post_description = extra_text.split("(")[0].strip(", ")
+                if post_description == "non-voting member":
                     continue
+                else:
+                    ever_voting_member = True
+
                 try:
                     post_name = self.POSTS[post_description]
                 except KeyError:
@@ -69,14 +73,17 @@ class CMAPPersonScraper(LegistarAPIPersonScraper, Scraper):
                     else:
                         print(term)
                         raise
-                role = term["OfficeRecordTitle"]
+
                 p.add_term(
-                    role,
+                    "Board Member",
                     "legislature",
                     district=post_name,
                     start_date=self.toDate(term["OfficeRecordStartDate"]),
                     end_date=self.toDate(term["OfficeRecordEndDate"]),
                 )
+
+            if not ever_voting_member:
+                continue
 
             source_urls = self.person_sources_from_office(term)
             person_api_url, person_web_url = source_urls
@@ -86,11 +93,16 @@ class CMAPPersonScraper(LegistarAPIPersonScraper, Scraper):
             members[member] = p
 
         for body in self.bodies():
-            if body["BodyTypeId"] == body_types["Committees"]:
+            if body["BodyTypeId"] in {
+                body_types["Committees"],
+                body_types["Public Bodies"],
+                body_types["Policy"],
+                body_types["Advisory"],
+            }:
                 o = Organization(
                     body["BodyName"],
                     classification="committee",
-                    parent_id={"name": "CMAP Board"},
+                    parent_id={"name": "CMAP Board of Directors"},
                 )
 
                 o.add_source(
@@ -105,9 +117,6 @@ class CMAPPersonScraper(LegistarAPIPersonScraper, Scraper):
                 )
 
                 for office in self.body_offices(body):
-                    # messed up record for joanna thompson
-                    if office["OfficeRecordId"] in {1055, 2513, 4383}:
-                        continue
 
                     role = office["OfficeRecordTitle"]
                     if role not in ("Vice Chair", "Chairman"):
