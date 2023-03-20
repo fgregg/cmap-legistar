@@ -123,9 +123,8 @@ class CMAPBillScraper(LegistarAPIBillScraper, Scraper):
 
             yield bill_action, votes
 
-    def scrape(self, window=3):
-        n_days_ago = datetime.datetime.utcnow() - datetime.timedelta(float(window))
-        for matter in self.matters():  # n_days_ago):
+    def scrape(self):
+        for matter in self.matters():
             matter_id = matter["MatterId"]
 
             date = matter["MatterIntroDate"]
