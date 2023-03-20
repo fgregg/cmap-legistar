@@ -1,1 +1,1 @@
- delete from division where id not in (select division_id from post);
+ delete from opencivicdata_division where id not in (select division_id from opencivicdata_post);
