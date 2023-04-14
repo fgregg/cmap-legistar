@@ -316,7 +316,7 @@ ACTION = {
     "Committee Discharged": {"ocd": "committee-passage", "order": 1},
     "Held in Committee": {"ocd": "committee-failure", "order": 1},
     "Recommended Do Not Pass": {"ocd": "committee-passage-unfavorable", "order": 1},
-    "Recommended to Pass": {"ocd": "committee-passage-favorable", "order": 1},
+    "recommended for approval": {"ocd": "committee-passage-favorable", "order": 1},    
     "Deferred and Published": {"ocd": None, "order": 2},
     "Amended in City Council": {"ocd": "amendment-passage", "order": 2},
     "Failed to Pass": {"ocd": "failure", "order": 2},
